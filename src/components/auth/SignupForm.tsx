@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { SignupFormData } from "@/types/auth";
 import { signupSchema } from "@/lib/validations";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth-store";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -90,7 +90,7 @@ export const SignupForm = () => {
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input type="tel" placeholder="+1 (123) 456-7890" {...field} />
+                <Input type="tel" placeholder="+(91)" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

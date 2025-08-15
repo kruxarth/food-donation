@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginFormData } from "@/types/auth";
 import { loginSchema } from "@/lib/validations";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth-store";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -42,7 +42,11 @@ export const LoginForm = () => {
     control,
     formState: { isSubmitting },
   } = form;
+ 
 
+
+
+//   EDIT CODE HERE->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   const onSubmit = async (data: LoginFormData) => {
     console.log("Login data:", data);
     await login(data);

@@ -41,6 +41,7 @@ const LoginPage = () => {
       </div>
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 min-h-screen">
         <div className="w-full max-w-md">
+
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
