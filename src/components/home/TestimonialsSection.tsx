@@ -33,7 +33,7 @@ const testimonialsData: Testimonial[] = [
   {
     name: "Rajesh Kumar",
     role: "Coordinator, Helping Hands Foundation",
-    avatar: "https://i.pravatar.cc/150?img=2", // Placeholder image
+    avatar: "https://i.pravatar.cc/150?img=12", // Placeholder image
     fallback: "RK",
     quote: "Receiving timely, high-quality food donations has been a game-changer for our shelter. The logistics are handled perfectly, allowing us to focus on what we do best: serving our community.",
   },

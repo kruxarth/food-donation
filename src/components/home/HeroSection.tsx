@@ -1,8 +1,8 @@
-// src/components/home/HeroSection.tsx
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, UtensilsCrossed } from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 /**
  * @interface HeroSectionProps
@@ -10,19 +10,15 @@ import React from "react";
  */
 interface HeroSectionProps {}
 
-/**
- * @component HeroSection
- * @description The main hero section for the homepage, designed to capture user attention and provide primary calls-to-action.
- * It uses a gradient background for a modern feel.
- * @param {HeroSectionProps} props - The props for the component.
- * @returns {JSX.Element} The rendered HeroSection component.
- */
+
+ 
 const HeroSection: React.FC<HeroSectionProps> = React.memo(() => {
+  const navigate = useNavigate();
+
   const handleDonateClick = () => {
-    // In a real app, this would use a router like Next.js's router or React Router
-    // For this example, we'll simulate navigation.
-    window.location.href = '/login';
+    navigate("/login"); // navigates to LoginPage without full reload
   };
+
 
   return (
     <section className="w-full bg-emerald-50 dark:bg-gray-900/50">
