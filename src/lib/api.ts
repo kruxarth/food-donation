@@ -42,3 +42,11 @@ export const fetchImpactMetrics = (): Promise<ImpactMetrics> => fetchWithDelay(M
  * @description Fetches all scheduled pickups for the user.
  */
 export const fetchScheduledPickups = (): Promise<ScheduledPickup[]> => fetchWithDelay(MOCK_SCHEDULED_PICKUPS);
+
+// Add this to src/lib/api.ts
+export const createDonation = (newDonation: CreateDonationFormData): Promise<{ id: string }> => {
+  console.log("Submitting to API:", newDonation);
+  return new Promise(resolve => 
+    setTimeout(() => resolve({ id: `don-${Math.floor(Math.random() * 1000)}` }), 1500)
+  );
+};

@@ -1,15 +1,22 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// src/pages/CreateDonationPage.tsx
+import { DonationForm } from "@/components/donation/DonationForm";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const CreateDonationPage = () => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Create a New Donation</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p>This is where the donation creation form will be.</p>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-3xl">Schedule a New Donation</CardTitle>
+          <CardDescription>
+            Follow the steps below to schedule a pickup for your surplus food. Thank you for your contribution!
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DonationForm />
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

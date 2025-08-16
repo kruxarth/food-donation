@@ -54,3 +54,58 @@ export const signupSchema = z
     message: "Passwords do not match.",
     path: ["confirmPassword"], // Path to show the error message on
   });
+
+  // src/lib/validations.ts
+
+
+
+
+
+
+  
+import { QUANTITY_UNITS } from "./constants";
+
+const foodItemSchema = z.object({
+  id: z.string(),
+  name: z.string().min(2, "Item name must be at least 2 characters."),
+  category: z.string().min(1, "Please select a category."),
+  quantity: z.string().min(1, "Quantity is required."),
+  unit: z.enum(QUANTITY_UNITS as [string, ...string[]], { message: "Unit is required." }),
+  expiryDate: z.date().optional(),
+  description: z.string().optional(),
+});
+
+export const step1Schema = z.object({
+  foodType: z.enum(['perishable', 'non-perishable'], { message: "Please select a food type." }),
+});
+
+export const step2Schema = z.object({
+  items: z.array(foodItemSchema).min(1, "Please add at least one food item."),
+  dietaryInfo: z.array(z.enum(['vegetarian', 'vegan', 'gluten-free'])),
+  allergenInfo: z.object({
+    nuts: z.boolean(), dairy: z.boolean(), gluten: z.boolean(),
+    shellfish: z.boolean(), eggs: z.boolean(), soy: z.boolean(),
+  }),
+});
+
+export const step3Schema = z.object({
+  pickupAddress: z.object({
+    id: z.string(),
+    street: z.string().min(3, "Street address is required."),
+    city: z.string().min(2, "City is required."),
+    state: z.string().min(2, "State is required."),
+    zip: z.string().regex(/^\d{5}$/, "Invalid ZIP code."),
+  }),
+  pickupDate: z.date({ message: "Please select a pickup date." })
+    .min(new Date(), { message: "Pickup date must be in the future." }),
+  pickupTimeSlot: z.enum(['morning', 'afternoon', 'evening'], { message: "Please select a time slot." }),
+  specialInstructions: z.string().max(300, "Instructions cannot exceed 300 characters.").optional(),
+});
+
+export const step4Schema = z.object({
+  termsAccepted: z.literal(true, {
+    message: "You must accept the terms and conditions to proceed.",
+  }),
+});
+
+export const fullDonationSchema = step1Schema.merge(step2Schema).merge(step3Schema).merge(step4Schema);
