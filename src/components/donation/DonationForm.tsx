@@ -3,10 +3,9 @@
 import React, { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useDonationFormStore } from '@/store/donation-store';
 import { useCreateDonation } from '@/hooks/use-create-donatinos';
-import { fullDonationSchema, step1Schema, step2Schema, step3Schema, step4Schema } from '@/lib/validations';
+import { fullDonationSchema } from '@/lib/validations';
 import type { CreateDonationFormData } from '@/types/donation';
 import { Button } from '@/components/ui/button';
 import { FoodCategorySelector } from './FoodCategorySelector';
@@ -34,12 +33,37 @@ export const DonationForm = () => {
   const createDonationMutation = useCreateDonation();
   const navigate = useNavigate();
 
+  // Ensure proper default values
+  const defaultValues: Partial<CreateDonationFormData> = {
+    foodType: formData.foodType || undefined,
+    items: formData.items || [],
+    dietaryInfo: formData.dietaryInfo || [],
+    allergenInfo: formData.allergenInfo || {
+      nuts: false,
+      dairy: false,
+      gluten: false,
+      shellfish: false,
+      eggs: false,
+      soy: false,
+    },
+    pickupAddress: formData.pickupAddress || {
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+    },
+    pickupDate: formData.pickupDate || undefined,
+    pickupTimeSlot: formData.pickupTimeSlot || undefined,
+    specialInstructions: formData.specialInstructions || '',
+    termsAccepted: formData.termsAccepted || false,
+  };
+
   const methods = useForm<CreateDonationFormData>({
     resolver: zodResolver(fullDonationSchema) as any,
-    defaultValues: formData,
-    mode: 'onChange' // To keep draft updated
+    defaultValues,
+    mode: 'onChange'
   });
-  
+
   // Update Zustand store whenever form data changes (for draft saving)
   useEffect(() => {
       interface WatchValue {
@@ -54,28 +78,93 @@ export const DonationForm = () => {
       return () => subscription.unsubscribe();
   }, [methods.watch, updateFormData]);
 
-  const handleNext = async () => {
-    let schema;
-    let fieldsToValidate: (keyof CreateDonationFormData)[] = [];
+const handleNext = async () => {
+  let fieldsToValidate: (keyof CreateDonationFormData)[] = [];
 
-    if (currentStep === 1) {
-        schema = step1Schema;
-        fieldsToValidate = ['foodType'];
-    } else if (currentStep === 2) {
-        schema = step2Schema;
-        fieldsToValidate = ['items', 'dietaryInfo', 'allergenInfo'];
-    } else if (currentStep === 3) {
-        schema = step3Schema;
-        fieldsToValidate = ['pickupAddress', 'pickupDate', 'pickupTimeSlot', 'specialInstructions'];
+  if (currentStep === 1) {
+    fieldsToValidate = ['foodType'];
+  } else if (currentStep === 2) {
+    fieldsToValidate = ['items', 'dietaryInfo', 'allergenInfo'];
+  } else if (currentStep === 3) {
+    fieldsToValidate = ['pickupAddress', 'pickupDate', 'pickupTimeSlot'];
+  }
+
+  // Check current form values
+  const currentValues = methods.getValues();
+  console.log('Current form values:', currentValues);
+  console.log('Fields to validate:', fieldsToValidate);
+
+  // First, let's clear previous errors
+  methods.clearErrors();
+  
+  // Validate step by step to get better error reporting
+  let isStepValid = true;
+  
+  if (currentStep === 1) {
+    if (!currentValues.foodType) {
+      methods.setError('foodType', { message: 'Please select a food type' });
+      isStepValid = false;
     }
-
-    const isStepValid = await methods.trigger(fieldsToValidate);
-
-    if (isStepValid && currentStep < steps.length) {
-      setCurrentStep(currentStep + 1 as (1|2|3|4));
+  } else if (currentStep === 2) {
+    if (!currentValues.items || currentValues.items.length === 0) {
+      methods.setError('items', { message: 'Please add at least one food item' });
+      isStepValid = false;
+    } else {
+      // Validate each item
+      currentValues.items.forEach((item, index) => {
+        if (!item.name) {
+          methods.setError(`items.${index}.name`, { message: 'Item name is required' });
+          isStepValid = false;
+        }
+        if (!item.category) {
+          methods.setError(`items.${index}.category`, { message: 'Category is required' });
+          isStepValid = false;
+        }
+        if (!item.quantity) {
+          methods.setError(`items.${index}.quantity`, { message: 'Quantity is required' });
+          isStepValid = false;
+        }
+        if (!item.unit) {
+          methods.setError(`items.${index}.unit`, { message: 'Unit is required' });
+          isStepValid = false;
+        }
+      });
     }
-  };
+  } else if (currentStep === 3) {
+    if (!currentValues.pickupAddress?.street) {
+      methods.setError('pickupAddress.street', { message: 'Street address is required' });
+      isStepValid = false;
+    }
+    if (!currentValues.pickupAddress?.city) {
+      methods.setError('pickupAddress.city', { message: 'City is required' });
+      isStepValid = false;
+    }
+    if (!currentValues.pickupAddress?.state) {
+      methods.setError('pickupAddress.state', { message: 'State is required' });
+      isStepValid = false;
+    }
+    if (!currentValues.pickupAddress?.zip) {
+      methods.setError('pickupAddress.zip', { message: 'ZIP code is required' });
+      isStepValid = false;
+    }
+    if (!currentValues.pickupDate) {
+      methods.setError('pickupDate', { message: 'Please select a pickup date' });
+      isStepValid = false;
+    }
+    if (!currentValues.pickupTimeSlot) {
+      methods.setError('pickupTimeSlot', { message: 'Please select a time slot' });
+      isStepValid = false;
+    }
+  }
+  
+  console.log('Step:', currentStep, 'Valid:', isStepValid, 'Errors:', methods.formState.errors);
 
+  if (isStepValid && currentStep < steps.length) {
+    setCurrentStep(currentStep + 1 as (1|2|3|4));
+  } else {
+    console.log('Validation failed. Current errors:', methods.formState.errors);
+  }
+};
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1 as (1|2|3|4));

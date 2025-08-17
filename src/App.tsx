@@ -20,6 +20,9 @@ function App() {
 
           {/* Protected Routes */}
           <Route element={<AppLayout />}>
+          
+
+
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/create" element={<CreateDonationPage />} />
             <Route path="/dashboard/profile" element={<ProfilePage />} />

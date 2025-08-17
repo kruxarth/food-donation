@@ -63,14 +63,14 @@ export const signupSchema = z
 
 
   
-import { QUANTITY_UNITS } from "./constants";
+
 
 const foodItemSchema = z.object({
   id: z.string(),
   name: z.string().min(2, "Item name must be at least 2 characters."),
   category: z.string().min(1, "Please select a category."),
   quantity: z.string().min(1, "Quantity is required."),
-  unit: z.enum(QUANTITY_UNITS as [string, ...string[]], { message: "Unit is required." }),
+  unit: z.string().min(1, "Unit is required."), // Simplified for now
   expiryDate: z.date().optional(),
   description: z.string().optional(),
 });
@@ -90,20 +90,20 @@ export const step2Schema = z.object({
 
 export const step3Schema = z.object({
   pickupAddress: z.object({
-    id: z.string(),
+    id: z.string().optional(),
     street: z.string().min(3, "Street address is required."),
     city: z.string().min(2, "City is required."),
     state: z.string().min(2, "State is required."),
-    zip: z.string().regex(/^\d{5}$/, "Invalid ZIP code."),
+    zip: z.string().regex(/^\d{5}(-\d{4})?$/, "Invalid ZIP code."), // Allow ZIP+4 format
+    isPrimary: z.boolean().optional(),
   }),
-  pickupDate: z.date({ message: "Please select a pickup date." })
-    .min(new Date(), { message: "Pickup date must be in the future." }),
+  pickupDate: z.date({ message: "Please select a pickup date." }),
   pickupTimeSlot: z.enum(['morning', 'afternoon', 'evening'], { message: "Please select a time slot." }),
   specialInstructions: z.string().max(300, "Instructions cannot exceed 300 characters.").optional(),
 });
 
 export const step4Schema = z.object({
-  termsAccepted: z.literal(true, {
+  termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions to proceed.",
   }),
 });

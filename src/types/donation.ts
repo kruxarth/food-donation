@@ -89,7 +89,7 @@ export interface FoodItem {
 }
 
 export interface Address {
-  id: string;
+  id?: string;
   street: string;
   city: string;
   state: string;
@@ -121,6 +121,6 @@ export interface CreateDonationFormData {
   pickupAddress: Address;
   pickupDate: Date;
   pickupTimeSlot: TimeSlot['id'];
-  specialInstructions: string;
+  specialInstructions?: string; // Make this optional
   termsAccepted: boolean;
 }

@@ -1,6 +1,5 @@
 // src/components/donation/PickupDetailsForm.tsx
 
-import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import type { CreateDonationFormData } from '@/types/donation';
 import { Label } from '@/components/ui/label';
@@ -21,9 +20,8 @@ import { TimeSlotPicker } from './TimeSlotPicker';
  * @returns {JSX.Element} The rendered PickupDetailsForm component.
  */
 export const PickupDetailsForm = () => {
-  const { control, watch, formState: { errors } } = useFormContext<CreateDonationFormData>();
+  const { control, watch, register, formState: { errors } } = useFormContext<CreateDonationFormData>();
   const selectedDate = watch('pickupDate');
-  const selectedTimeSlot = watch('pickupTimeSlot');
 
   return (
     <div className="space-y-8">
@@ -84,11 +82,11 @@ export const PickupDetailsForm = () => {
            <div>
             <Label htmlFor="specialInstructions">Special Instructions (Optional)</Label>
             <Textarea
-              id="specialInstructions"
-              {...control.register('specialInstructions')}
-              placeholder="e.g., Use the loading dock on the north side of the building. Call upon arrival."
-              className="mt-2"
-            />
+  id="specialInstructions"
+  {...register('specialInstructions')} // Remove control.register, use register directly
+  placeholder="e.g., Use the loading dock on the north side of the building. Call upon arrival."
+  className="mt-2"
+/>
              {errors.specialInstructions && <p className="text-sm text-destructive mt-1">{errors.specialInstructions.message}</p>}
           </div>
         </CardContent>

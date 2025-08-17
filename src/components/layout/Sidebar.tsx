@@ -65,7 +65,6 @@ const NavContent: React.FC = () => {
       <div className="mt-auto border-t p-4">
         <div className="flex items-center gap-4">
           <Avatar>
-            <AvatarImage src={user?.image} alt={user?.fullName} />
             <AvatarFallback>{user?.fullName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
