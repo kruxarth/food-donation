@@ -1,6 +1,6 @@
 // src/components/donation/DonationForm.tsx
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDonationFormStore } from '@/store/donation-store';
@@ -13,7 +13,7 @@ import { ItemDetailsForm } from './ItemDetailsForm';
 import { PickupDetailsForm } from './PickupDetailsForm';
 import { ReviewSubmitForm } from './ReviewSubmitForm';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const steps = [
@@ -32,6 +32,7 @@ export const DonationForm = () => {
   const { currentStep, formData, setCurrentStep, updateFormData, resetForm } = useDonationFormStore();
   const createDonationMutation = useCreateDonation();
   const navigate = useNavigate();
+    const [showSuccess, setShowSuccess] = useState(false);
 
   // Ensure proper default values
   const defaultValues: Partial<CreateDonationFormData> = {
@@ -171,15 +172,45 @@ const handleNext = async () => {
     }
   };
 
+  
+  
   const onSubmit = (data: CreateDonationFormData) => {
     createDonationMutation.mutate(data, {
       onSuccess: () => {
+        setShowSuccess(true);
         resetForm(); // Clear the form and draft from localStorage
-        navigate('/dashboard');
+        
+        // Show success message for 3 seconds, then navigate
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 3000);
+      },
+      onError: (error) => {
+        console.error('Donation submission failed:', error);
+        // You could add error handling here
       }
     });
   };
-  
+
+   if (showSuccess) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-6 py-12">
+        <CheckCircle className="h-16 w-16 text-green-600" />
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-bold text-green-600">Donation Submitted Successfully!</h2>
+          <p className="text-muted-foreground">
+            Thank you for your generous donation. You'll be redirected to your dashboard shortly.
+          </p>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2 max-w-xs">
+          <div className="bg-green-600 h-2 rounded-full animate-pulse" style={{ width: '100%' }}></div>
+        </div>
+      </div>
+    );
+  }
+
+
+ 
   const selectedFoodType = methods.watch('foodType');
 
   return (
@@ -206,7 +237,7 @@ const handleNext = async () => {
           ))}
         </div>
 
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="space-y-8">
           {currentStep === 1 && <FoodCategorySelector selectedValue={selectedFoodType} onSelect={(val) => methods.setValue('foodType', val, { shouldValidate: true })} />}
           {currentStep === 2 && <ItemDetailsForm />}
           {currentStep === 3 && <PickupDetailsForm />}
@@ -221,13 +252,30 @@ const handleNext = async () => {
             {currentStep < steps.length ? (
               <Button type="button" onClick={handleNext}>Next</Button>
             ) : (
-              <Button type="submit" disabled={createDonationMutation.isPending}>
+              <Button 
+                type="button" 
+                disabled={createDonationMutation.isPending || !methods.watch('termsAccepted')}
+                onClick={() => {
+                  console.log('Submit button clicked');
+                  const formData = methods.getValues();
+                  console.log('Current form data:', formData);
+                  
+                  if (!formData.termsAccepted) {
+                    console.log('Terms not accepted');
+                    methods.setError('termsAccepted', { message: 'You must accept the terms and conditions' });
+                    return;
+                  }
+                  
+                  console.log('Submitting donation...');
+                  onSubmit(formData);
+                }}
+              >
                  {createDonationMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Submit Donation
+                {createDonationMutation.isPending ? 'Submitting...' : 'Submit Donation'}
               </Button>
             )}
           </div>
-        </form>
+        </div>
       </div>
     </FormProvider>
   );
