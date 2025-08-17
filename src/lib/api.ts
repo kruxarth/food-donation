@@ -1,8 +1,9 @@
 // src/lib/api.ts
 
-import { MOCK_DONATIONS, MOCK_IMPACT_METRICS, MOCK_SCHEDULED_PICKUPS, MOCK_USER } from "@/lib/ mock-data";
-import type { Donation, ImpactMetrics, ScheduledPickup } from "@/types/donation";
+import { MOCK_DONATIONS, MOCK_IMPACT_METRICS, MOCK_SCHEDULED_PICKUPS, MOCK_USER, generateMockTrackingData } from "@/lib/ mock-data";
+import type { Donation, ImpactMetrics, ScheduledPickup, CreateDonationFormData } from "@/types/donation";
 import type {User} from "@/types/user"
+import type { TrackingData } from "@/types/tracking";
 
 
 /**
@@ -43,10 +44,49 @@ export const fetchImpactMetrics = (): Promise<ImpactMetrics> => fetchWithDelay(M
  */
 export const fetchScheduledPickups = (): Promise<ScheduledPickup[]> => fetchWithDelay(MOCK_SCHEDULED_PICKUPS);
 
-// Add this to src/lib/api.ts
-export const createDonation = (newDonation: CreateDonationFormData): Promise<{ id: string }> => {
-  console.log("Submitting to API:", newDonation);
-  return new Promise(resolve => 
-    setTimeout(() => resolve({ id: `don-${Math.floor(Math.random() * 1000)}` }), 1500)
-  );
+
+/**
+ * @description Fetches the real-time tracking data for a specific donation.
+ * Simulates a 404 error if the donation ID is not found in the mock data.
+ * @param {string} donationId The ID of the donation to track.
+ */
+export const fetchTrackingData = (donationId: string): Promise<TrackingData> => {
+  console.log(`[API] Fetching tracking data for: ${donationId}`);
+  const data = generateMockTrackingData(donationId);
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (data) {
+        resolve(data);
+      } else {
+        reject(new Error("Donation not found."));
+      }
+    }, 600); // Simulate network delay
+  });
+};
+
+/**
+ * @description Creates a new donation.
+ * @param data The donation form data to be submitted.
+ */
+export const createDonation = (data: CreateDonationFormData): Promise<Donation> => {
+  // Generate a new donation object
+  const newDonation: Donation = {
+    id: `donation-${Date.now()}`,
+    title: `${data.items?.[0]?.name || 'Food'} Donation`,
+    description: data.specialInstructions || 'Food donation',
+    status: 'pending',
+    items: data.items || [],
+    pickupAddress: data.pickupAddress,
+    pickupDate: data.pickupDate,
+    pickupTimeSlot: data.pickupTimeSlot,
+    dietaryInfo: data.dietaryInfo || [],
+    allergenInfo: data.allergenInfo,
+    specialInstructions: data.specialInstructions,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  // Simulate API call delay
+  return fetchWithDelay(newDonation, 1000);
 };

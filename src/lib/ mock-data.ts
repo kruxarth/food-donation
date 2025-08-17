@@ -2,6 +2,7 @@
 import type {   User } from "@/types/user";
 import {  DonationStatus } from "@/types/donation";
 import type { Donation,  ImpactMetrics, ScheduledPickup } from "@/types/donation";
+import type { TrackingData, TrackingDonationStatus, StatusUpdate, RecipientOrg, RouteInfo, DriverInfo, DonationSummary } from "@/types/tracking";
 
 export const MOCK_USER: User = {
   id: "user-123",
@@ -77,3 +78,109 @@ export const MOCK_SCHEDULED_PICKUPS: ScheduledPickup[] = MOCK_DONATIONS
     donationId: d.id,
     recipientName: d.recipient.name,
   }));
+
+
+
+// --- New Mock Data and Generator for Tracking ---
+
+/**
+ * @function generateMockTrackingData
+ * @description Creates different tracking data scenarios based on the donation ID.
+ * This simulates fetching real-time data for different donations.
+ * @param {string} donationId - The ID of the donation to track.
+ * @returns {TrackingData | null} Tracking data for the donation, or null if not found.
+ */
+export const generateMockTrackingData = (donationId: string): TrackingData | null => {
+  const baseDonation = MOCK_DONATIONS.find(d => d.id === donationId);
+  if (!baseDonation) return null;
+
+  const now = new Date();
+  
+  const recipient: RecipientOrg = {
+    id: 'rec-abc',
+    name: 'City Harvest Food Bank',
+    logoUrl: '/logos/city-harvest.png', // Placeholder path
+    description: 'Serving nutritious food to communities in need since 1982.',
+    address: '456 Charity Lane, Metro City, ST 98765',
+    totalDonationsReceived: 142,
+  };
+  
+  const route: RouteInfo = {
+    pickupLocation: { lat: 34.0522, lng: -118.2437 },
+    deliveryLocation: { lat: 34.0622, lng: -118.2537 },
+    estimatedDistance: "8.2 miles",
+    estimatedDuration: "22 mins",
+  };
+  
+  const summary = {
+    id: baseDonation.id,
+    createdAt: baseDonation.submittedDate,
+    itemCount: baseDonation.items.length,
+    pickupAddress: "The Curry Leaf Bistro, 123 Gourmet St, Metro City",
+    deliveryAddress: recipient.address,
+  };
+
+  let timeline: StatusUpdate[] = [
+    { status: 'Scheduled', timestamp: baseDonation.submittedDate, notes: 'Donation has been scheduled for pickup.', isCompleted: false },
+    { status: 'Driver Assigned', timestamp: '', notes: 'A driver is assigned and en route.', isCompleted: false },
+    { status: 'Collected', timestamp: '', notes: 'Your donation has been collected by the driver.', isCompleted: false },
+    { status: 'In Transit', timestamp: '', notes: 'The donation is on its way to the recipient.', isCompleted: false },
+    { status: 'Delivered', timestamp: '', notes: 'Successfully delivered to the charity.', isCompleted: false },
+    { status: 'Completed', timestamp: '', notes: 'The donation process is complete. Thank you!', isCompleted: false },
+  ];
+  
+  let currentStatus: TrackingDonationStatus = 'Scheduled';
+  let driver: DriverInfo | null = null;
+  let eta = new Date(now.getTime() + 25 * 60000).toISOString(); // ETA 25 mins from now
+
+  // --- Scenarios based on donationId ---
+  switch (donationId) {
+    case 'don-001': // Scheduled / Driver Assigned
+      currentStatus = 'Driver Assigned';
+      timeline[0].isCompleted = true;
+      timeline[0].timestamp = new Date(now.getTime() - 60 * 60000).toISOString(); // 1 hour ago
+      timeline[1].timestamp = new Date(now.getTime() - 5 * 60000).toISOString(); // 5 mins ago
+      driver = {
+        id: 'driver-01', name: 'Rajesh Kumar', avatarUrl: 'https://i.pravatar.cc/150?img=2', phone: '555-123-4567', rating: 4.9,
+        vehicle: { makeModel: 'Ford Transit', licensePlate: 'FOOD-4-ALL', color: 'White' },
+        currentLocation: { lat: 34.0422, lng: -118.2337 },
+      };
+      break;
+
+    case 'don-002': // In Transit
+      currentStatus = 'In Transit';
+      timeline[0] = { status: 'Scheduled', timestamp: new Date(now.getTime() - 2 * 60 * 60000).toISOString(), notes: 'Donation scheduled.', isCompleted: true };
+      timeline[1] = { status: 'Driver Assigned', timestamp: new Date(now.getTime() - 45 * 60000).toISOString(), notes: 'Rajesh Kumar is assigned.', isCompleted: true };
+      timeline[2] = { status: 'Collected', timestamp: new Date(now.getTime() - 15 * 60000).toISOString(), notes: 'Donation collected.', isCompleted: true };
+      timeline[3].timestamp = new Date(now.getTime() - 1 * 60000).toISOString(); // 1 min ago
+      eta = new Date(now.getTime() + 10 * 60000).toISOString(); // ETA 10 mins from now
+      driver = {
+        id: 'driver-01', name: 'Rajesh Kumar', avatarUrl: 'https://i.pravatar.cc/150?img=2', phone: '555-123-4567', rating: 4.9,
+        vehicle: { makeModel: 'Ford Transit', licensePlate: 'FOOD-4-ALL', color: 'White' },
+        currentLocation: { lat: 34.0550, lng: -118.2450 }, // Driver is moving
+      };
+      break;
+      
+    case 'don-003': // Completed
+      currentStatus = 'Completed';
+       timeline = timeline.map((step, i) => ({
+           ...step,
+           isCompleted: true,
+           timestamp: new Date(now.getTime() - (6 - i) * 60 * 60000).toISOString() // Fill in past timestamps
+       }));
+       eta = timeline[5].timestamp;
+       driver = {
+        id: 'driver-02', name: 'Anjali Mehta', avatarUrl: 'https://i.pravatar.cc/150?img=3', phone: '555-987-6543', rating: 4.8,
+        vehicle: { makeModel: 'Nissan NV200', licensePlate: 'GIVE-BACK', color: 'Silver' },
+        currentLocation: route.deliveryLocation,
+      };
+      break;
+      
+    default: // Default case is 'Scheduled'
+      timeline[0].isCompleted = true;
+      timeline[0].timestamp = baseDonation.submittedDate;
+      break;
+  }
+  
+  return { summary, currentStatus, timeline, driver, recipient, eta, route };
+};
