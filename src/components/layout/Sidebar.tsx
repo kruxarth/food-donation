@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/create", label: "New Donation", icon: PlusCircle },
-  { href: "/dashboard/track", label: "Track Donations", icon: Map },
+  { href: "/dashboard/track/don-001", label: "Track Donations", icon: Map },
   { href: "/dashboard/profile", label: "Profile", icon: UserIcon },
 ];
 

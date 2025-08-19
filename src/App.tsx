@@ -1,5 +1,5 @@
 import HomePage from "./pages/HomePage";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppLayout } from "./components/layout/AppLayout";
@@ -20,13 +20,9 @@ function App() {
 
           {/* Protected Routes */}
           <Route element={<AppLayout />}>
-          
-
-
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/create" element={<CreateDonationPage />} />
             <Route path="/dashboard/profile" element={<ProfilePage />} />
-            <Route path="/dashboard/track" element={<TrackingPage />} />
             <Route path="/dashboard/track/:id" element={<TrackingPage />} />
           </Route>
           

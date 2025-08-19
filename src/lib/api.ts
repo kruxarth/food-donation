@@ -1,7 +1,7 @@
 // src/lib/api.ts
 
 import { MOCK_DONATIONS, MOCK_IMPACT_METRICS, MOCK_SCHEDULED_PICKUPS, MOCK_USER, generateMockTrackingData } from "@/lib/ mock-data";
-import type { Donation, ImpactMetrics, ScheduledPickup, CreateDonationFormData } from "@/types/donation";
+import type { Donation, ImpactMetrics, ScheduledPickup, CreateDonationFormData, DonationStatus } from "@/types/donation";
 import type {User} from "@/types/user"
 import type { TrackingData } from "@/types/tracking";
 
@@ -73,18 +73,14 @@ export const createDonation = (data: CreateDonationFormData): Promise<Donation> 
   // Generate a new donation object
   const newDonation: Donation = {
     id: `donation-${Date.now()}`,
-    title: `${data.items?.[0]?.name || 'Food'} Donation`,
-    description: data.specialInstructions || 'Food donation',
-    status: 'pending',
+    status: 'submitted' as DonationStatus,
+    submittedDate: new Date().toISOString(),
+    pickupDate: data.pickupDate.toISOString(),
     items: data.items || [],
-    pickupAddress: data.pickupAddress,
-    pickupDate: data.pickupDate,
-    pickupTimeSlot: data.pickupTimeSlot,
-    dietaryInfo: data.dietaryInfo || [],
-    allergenInfo: data.allergenInfo,
-    specialInstructions: data.specialInstructions,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    recipient: {
+      name: '', // You'll need to determine how to get recipient info
+      id: ''    // from your data or set default values
+    }
   };
 
   // Simulate API call delay

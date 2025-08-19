@@ -4,14 +4,16 @@ import React from 'react';
 import { useDonations, useImpactMetrics, useScheduledPickups } from '@/hooks/use-donations';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Calendar } from "@/components/ui/calendar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { HandHeart, Leaf, Truck, AlertCircle } from "lucide-react";
+import { HandHeart, Leaf, Truck, AlertCircle, Eye } from "lucide-react";
 import{  DonationStatus } from '@/types/donation';
 import type { Donation } from '@/types/donation';
 import { format } from "date-fns";
+import { useNavigate } from 'react-router-dom';
 
 /**
  * @component ImpactMetricsCards
@@ -63,6 +65,7 @@ const getStatusBadgeVariant = (status: DonationStatus) => {
  */
 const ActiveDonationsList: React.FC<{ donations: Donation[], isLoading: boolean }> = ({ donations, isLoading }) => {
     const activeDonations = donations?.filter(d => d.status === DonationStatus.Pending || d.status === DonationStatus.InProgress);
+    const navigate = useNavigate();
 
     return (
         <Card>
@@ -86,7 +89,17 @@ const ActiveDonationsList: React.FC<{ donations: Donation[], isLoading: boolean 
                                     <p className="font-semibold">{d.items.map(i => i.name).join(', ')}</p>
                                     <p className="text-sm text-muted-foreground">Pickup on {format(new Date(d.pickupDate), "MMM d, yyyy")}</p>
                                </div>
-                               <Badge variant={getStatusBadgeVariant(d.status)} className="mt-2 sm:mt-0">{d.status}</Badge>
+                               <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                                   <Badge variant={getStatusBadgeVariant(d.status)}>{d.status}</Badge>
+                                   <Button
+                                       size="sm"
+                                       variant="outline"
+                                       onClick={() => navigate(`/dashboard/track/${d.id}`)}
+                                   >
+                                       <Eye className="h-4 w-4 mr-1" />
+                                       Track
+                                   </Button>
+                               </div>
                            </li>
                         ))}
                     </ul>
