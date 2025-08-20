@@ -10,7 +10,7 @@ export const FOOD_CATEGORIES: FoodCategory[] = [
 export const TIME_SLOTS: TimeSlot[] = [
   { id: 'morning', label: 'Morning', range: '9:00 AM - 12:00 PM', available: true },
   { id: 'afternoon', label: 'Afternoon', range: '12:00 PM - 4:00 PM', available: true },
-  { id: 'evening', label: 'Evening', range: '4:00 PM - 7:00 PM', available: false },
+  { id: 'evening', label: 'Evening', range: '4:00 PM - 7:00 PM', available: true },
 ];
 
 export const DIETARY_OPTIONS: DietaryInfo[] = [
