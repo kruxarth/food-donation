@@ -86,3 +86,46 @@ export const createDonation = (data: CreateDonationFormData): Promise<Donation> 
   // Simulate API call delay
   return fetchWithDelay(newDonation, 1000);
 };
+
+
+
+import type { 
+
+  UserProfileDisplay
+} from "@/types/profile";
+import { 
+
+  MOCK_USER_PROFILE_DISPLAY
+} from "./ mock-data";
+
+
+
+
+
+/**
+ * @description Fetches the complete, aggregated data for the user profile display page.
+ * @param {string} userId The ID of the user.
+ */
+export const fetchUserProfileDisplay = (userId: string): Promise<UserProfileDisplay> => {
+  console.log(`[API] Fetching display profile for user: ${userId}`);
+  // In a real app, this would make multiple API calls and aggregate the data.
+  // Here, we just return the complete mock object.
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(MOCK_USER_PROFILE_DISPLAY);
+    }, 800); // Simulate network delay
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+

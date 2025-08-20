@@ -184,3 +184,89 @@ export const generateMockTrackingData = (donationId: string): TrackingData | nul
   
   return { summary, currentStatus, timeline, driver, recipient, eta, route };
 };
+
+
+
+
+import type { 
+  UserProfileDisplay,
+  
+} from "@/types/profile";
+
+import { 
+    Gift, ShieldCheck, Sprout, Star, Trophy, MessageSquare, HandHeart, CheckCircle
+} from "lucide-react";
+import { subMonths, subDays } from 'date-fns';
+
+
+export const MOCK_USER_PROFILE_DISPLAY: UserProfileDisplay = {
+  user: {
+    id: "user-123",
+    name: "Priya Sharma",
+    email: "priya.sharma@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?img=1",
+    location: "Metro City, ST",
+    userType: "Business",
+  },
+  stats: {
+    totalDonations: 42,
+    totalMeals: 1256,
+    co2Saved: 870,
+    moneyValue: 3140,
+    currentStreak: 6,
+    memberSince: subMonths(new Date(), 18).toISOString(),
+    profileCompletion: 85,
+  },
+  achievements: [
+    { id: 'ach-1', name: 'First Donation', description: 'Made your first donation.', icon: Gift, unlockedAt: subMonths(new Date(), 17).toISOString(), category: 'donation' },
+    { id: 'ach-2', name: 'Community Champion', description: 'Donated 10 times.', icon: Trophy, unlockedAt: subMonths(new Date(), 8).toISOString(), category: 'donation' },
+    { id: 'ach-3', name: 'Eco Warrior', description: 'Saved 500kg of CO2.', icon: Sprout, unlockedAt: subMonths(new Date(), 3).toISOString(), category: 'impact' },
+    { id: 'ach-4', name: 'Top Contributor', description: 'Become a top 10% donor.', icon: Star, unlockedAt: null, category: 'community', progress: { current: 42, target: 50 } },
+    { id: 'ach-5', name: 'Perfect Year', description: 'Donate every month for a year.', icon: ShieldCheck, unlockedAt: null, category: 'community', progress: { current: 6, target: 12 } },
+  ],
+  recentDonations: [
+    { id: 'don-002', date: subDays(new Date(), 2).toISOString(), recipient: 'Community Kitchen Shelter', itemCount: 1, status: DonationStatus.InProgress },
+    { id: 'don-001', date: subDays(new Date(), 5).toISOString(), recipient: 'City Harvest Food Bank', itemCount: 2, status: DonationStatus.Completed },
+    { id: 'don-006', date: subDays(new Date(), 12).toISOString(), recipient: 'Helping Hands Foundation', itemCount: 1, status: DonationStatus.Completed },
+    { id: 'don-005', date: subDays(new Date(), 25).toISOString(), recipient: 'Community Kitchen Shelter', itemCount: 1, status: DonationStatus.Cancelled },
+    { id: 'don-004', date: subDays(new Date(), 40).toISOString(), recipient: 'City Harvest Food Bank', itemCount: 1, status: DonationStatus.Completed },
+  ],
+  activityFeed: [
+      { id: 'act-1', type: 'donation_completed', title: 'Donation #don-001 Completed', description: 'Your donation to City Harvest Food Bank was successfully delivered.', timestamp: subDays(new Date(), 5).toISOString(), icon: CheckCircle },
+      { id: 'act-2', type: 'achievement_unlocked', title: 'Achievement Unlocked: Eco Warrior', description: 'You have saved over 500kg of CO2 emissions!', timestamp: subMonths(new Date(), 3).toISOString(), icon: Trophy },
+      { id: 'act-3', type: 'thank_you', title: 'A Message from Helping Hands', description: '"Thank you for your generous donation! It made a huge difference."', timestamp: subDays(new Date(), 11).toISOString(), icon: MessageSquare },
+      { id: 'act-4', type: 'milestone', title: '6-Month Donation Streak!', description: 'You have donated for 6 consecutive months. Keep it up!', timestamp: subDays(new Date(), 20).toISOString(), icon: HandHeart },
+  ],
+  favoriteCharities: [
+      { id: 'rec-abc', name: 'City Harvest Food Bank', logoUrl: '/logos/city-harvest.png', donationCount: 18 },
+      { id: 'rec-def', name: 'Community Kitchen Shelter', logoUrl: '/logos/community-kitchen.png', donationCount: 12 },
+      { id: 'rec-ghi', name: 'Helping Hands Foundation', logoUrl: '/logos/helping-hands.png', donationCount: 12 },
+  ],
+  charts: {
+    donationTrend: [
+      { month: 'Mar', donations: 3 }, { month: 'Apr', donations: 4 }, { month: 'May', donations: 2 },
+      { month: 'Jun', donations: 5 }, { month: 'Jul', donations: 4 }, { month: 'Aug', donations: 6 },
+    ],
+    categoryBreakdown: [
+      { name: 'Produce', value: 400, fill: '#8884d8' },
+      { name: 'Baked Goods', value: 300, fill: '#82ca9d' },
+      { name: 'Dairy', value: 300, fill: '#ffc658' },
+      { name: 'Pantry', value: 200, fill: '#ff8042' },
+    ],
+  },
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
