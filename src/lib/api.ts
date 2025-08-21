@@ -143,13 +143,18 @@ export const fetchImpactMetrics = (): Promise<ImpactMetrics> =>
 // ============================================================================
 
 export class ApiError extends Error {
+  public statusCode: number;
+  public code?: string;
+  
   constructor(
     message: string, 
-    public statusCode: number = 500,
-    public code?: string
+    statusCode: number = 500,
+    code?: string
   ) {
     super(message);
     this.name = 'ApiError';
+    this.statusCode = statusCode;
+    this.code = code;
   }
 }
 

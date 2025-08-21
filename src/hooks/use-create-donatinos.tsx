@@ -1,4 +1,4 @@
-// src/hooks/use-create-donation.ts
+// src/hooks/use-donation.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createDonation } from '@/lib/api'; // We'll add this to api.ts
 import type { CreateDonationFormData } from '@/types/donation';
