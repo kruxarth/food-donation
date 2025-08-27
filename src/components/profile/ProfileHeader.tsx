@@ -2,7 +2,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
+import { CustomProgress } from "../ui/custom-progress";
 import type { UserInfo, UserStats } from "@/types/profile";
 import { format } from "date-fns";
 import { Edit, MapPin, Share2 } from "lucide-react";
@@ -41,7 +42,7 @@ export const ProfileHeader = ({ user, stats }: ProfileHeaderProps) => (
         <p className="text-sm font-medium">Profile Completion</p>
         <p className="text-sm font-bold text-primary">{stats.profileCompletion}%</p>
       </div>
-      <Progress value={stats.profileCompletion} aria-label={`${stats.profileCompletion}% profile completion`} />
+      <CustomProgress value={stats.profileCompletion} aria-label={`${stats.profileCompletion}% profile completion`} />
     </div>
   </div>
 );
