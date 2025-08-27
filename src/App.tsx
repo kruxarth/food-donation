@@ -9,7 +9,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import CreateDonationPage from "./pages/CreateDonationPage";
-import UserProfilePage from "./pages/UserProfilePage";
+import { UserProfilePage } from "./pages/UserProfilePage";
 import TrackingPage from "./pages/TrackingPage";
 import { AppLayout } from "./components/layout/AppLayout";
 
